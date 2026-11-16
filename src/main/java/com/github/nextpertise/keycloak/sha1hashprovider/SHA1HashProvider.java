@@ -1,6 +1,5 @@
 package com.github.nextpertise.keycloak.sha1hashprovider;
 
-import org.jboss.logging.Logger;
 import org.keycloak.credential.hash.PasswordHashProvider;
 import org.keycloak.models.PasswordPolicy;
 import org.keycloak.models.credential.PasswordCredentialModel;
@@ -9,8 +8,6 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 
 public class SHA1HashProvider implements PasswordHashProvider {
-
-	private static final Logger logger = Logger.getLogger(SHA1HashProvider.class);
 
 	private final String providerId;
 	public static final String ALGORITHM = "SHA-1";
@@ -37,14 +34,9 @@ public class SHA1HashProvider implements PasswordHashProvider {
 	@Override
 	public boolean verify(String rawPassword, PasswordCredentialModel credential) {
 		String salt = new String(credential.getPasswordSecretData().getSalt(), java.nio.charset.StandardCharsets.UTF_8);
-		logger.infof("salt: '%s'", salt);
 		String encodedPassword = this.encode(salt + rawPassword, credential.getPasswordCredentialData().getHashIterations());
-		logger.infof("generated hash: '%s'", encodedPassword);
 		String hash = credential.getPasswordSecretData().getValue();
-		logger.infof("database hash: '%s'", hash);
-		Boolean result = encodedPassword.equals(hash);
-		logger.infof("result: '%b'", result);
-		return result;
+		return encodedPassword.equals(hash);
 	}
 
 	@Override
@@ -64,5 +56,4 @@ public class SHA1HashProvider implements PasswordHashProvider {
 
 		return null;
 	}
-
 }
